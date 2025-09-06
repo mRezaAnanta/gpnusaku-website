@@ -11,10 +11,11 @@
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-    --font-dancing:
-        'Dancing Script', cursive;
+    --font-dancing: 'Dancing Script', cursive;
+    --font-nunito: 'Nunito', sans-serif;
 
-    --color-navbar: var(--navbar);
+    --color-green: var(--navbar);
+    --color-dark-green: var(--dark-idk);
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -84,6 +85,8 @@
 
 :root {
     --navbar: #8BD766;
+    /*--dark-idk: #3F7D20;*/
+    --dark-idk: #2F5233;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
