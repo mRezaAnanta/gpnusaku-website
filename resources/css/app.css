@@ -166,3 +166,35 @@
         @apply bg-background text-foreground;
     }
 }
+
+@layer utilities {
+  @keyframes fade-in-down {
+    from {
+      opacity: 0;
+      transform: translateY(-1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-out-up {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-1rem);
+    }
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 0.4s ease-out both;
+  }
+
+  .animate-fade-out-up {
+    animation: fade-out-up 0.4s ease-out both;
+  }
+}
