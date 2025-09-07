@@ -3,6 +3,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import Navbar from '@/components/navbar'
 import Hero from '@/components/hero'
 import Profile from '@/components/profile'
+import Gallery from '@/components/gallery'
 
 export default function Welcome() {
     return (
@@ -15,6 +16,7 @@ export default function Welcome() {
             <main>
                 <Hero />
                 <Profile />
+                <Gallery />
             </main>
         </>
     );
