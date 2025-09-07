@@ -2,6 +2,7 @@ import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import Navbar from '@/components/navbar'
 import Hero from '@/components/hero'
+import Profile from '@/components/profile'
 
 export default function Welcome() {
     return (
@@ -12,14 +13,9 @@ export default function Welcome() {
             </Head>
             <Navbar />
             <main>
-            <Hero />
+                <Hero />
+                <Profile />
             </main>
-            {/* <div className="flex min-h-screen items-center bg-[#FDFDFC] text-[#1b1b18] lg:justify-center dark:bg-[#0a0a0a]"> */}
-            {/*     <div className="flex w-full items-center justify-start opacity-100 transition-opacity duration-750 starting:opacity-0"> */}
-            {/*         <main className="flex w-full flex-col-reverse lg:max-w-4xl lg:flex-row"> */}
-            {/*         </main> */}
-            {/*     </div> */}
-            {/* </div> */}
         </>
     );
 }
