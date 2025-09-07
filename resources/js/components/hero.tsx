@@ -1,7 +1,6 @@
 const Hero = () => {
     return (
-        <section className="relative flex justify-center lg:justify-start p-12 overflow-hidden">
-            {/* FIX: video not playing */}
+        <section className="relative flex justify-center items-start lg:justify-start p-12 min-h-[80vh] overflow-hidden">
             <video
                 loop
                 autoPlay
@@ -28,6 +27,7 @@ const Hero = () => {
                     Mulai Perjalanan Wisata
                 </button>
             </div>
+            {/* TODO: add unmute/muted button */}
         </section>
     )
 }
