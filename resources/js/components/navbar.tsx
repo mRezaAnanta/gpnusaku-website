@@ -18,7 +18,7 @@ export default function Navbar() {
     }
 
     return (
-        <header className="mb-6 w-full p-3 lg:p-4 text-sm not-has-[nav]:hidden bg-green">
+        <header className="w-full p-3 lg:p-4 text-sm not-has-[nav]:hidden bg-green">
             <nav className="flex items-center justify-between text-dark-green">
                 <Link
                     href={route('home')}
