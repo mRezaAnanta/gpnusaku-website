@@ -4,6 +4,7 @@ import Navbar from '@/components/navbar'
 import Hero from '@/components/hero'
 import Profile from '@/components/profile'
 import Gallery from '@/components/gallery'
+import Product from '@/components/product'
 import Footer from '@/components/footer'
 
 export default function Welcome() {
@@ -18,6 +19,7 @@ export default function Welcome() {
                 <Hero />
                 <Profile />
                 <Gallery />
+                <Product />
             </main>
             <Footer />
             <p className="bg-light-green text-center font-nunito text-sm text-dark-green pb-2">Copyright © 2025 Gampong Nusa. All Rights Reserved. Made by <a href="https://github.com/mRezaAnanta">Muhammad Reza Ananta</a></p>
