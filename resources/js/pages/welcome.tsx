@@ -14,7 +14,7 @@ export default function Welcome() {
                 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
             </Head>
             <Navbar />
-            <main>
+            <main className="bg-gradient-to-b from-green via-light-green to-white">
                 <Hero />
                 <Profile />
                 <Gallery />
