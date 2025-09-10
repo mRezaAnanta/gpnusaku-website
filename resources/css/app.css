@@ -16,6 +16,7 @@
     --color-green: var(--navbar);
     --color-dark-green: var(--dark-idk);
     --color-button: var(--button);
+    --color-light-green: var(--light-green);
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -86,6 +87,7 @@
 :root {
     --navbar: #8BD766;
     --button: #3C7123;
+    --light-green: #B9D9AA;
     /*--dark-idk: #3F7D20;*/
     --dark-idk: #2F5233;
     --background: oklch(1 0 0);
