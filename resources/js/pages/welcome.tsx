@@ -22,7 +22,6 @@ export default function Welcome() {
                 <Product />
             </main>
             <Footer />
-            <p className="bg-light-green text-center font-nunito text-sm text-dark-green pb-2">Copyright © 2025 Gampong Nusa. All Rights Reserved. Made by <a href="https://github.com/mRezaAnanta">Muhammad Reza Ananta</a></p>
         </>
     );
 }
