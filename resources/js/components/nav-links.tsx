@@ -11,13 +11,13 @@ const NavLinks = ({ isMobile = false }: { isMobile?: boolean}) => {
                 Home
             </Link>
             <Link
-                href={route('register')}
+                // href={route('products')}
                 className="inline-block text-base text-dark-green hover:text-dark-green/75 font-bold leading-normal transform transition duration-200 ease-in-out hover:-translate-y-0.5"
             >
                 Products
             </Link>
             <Link
-                href={route('register')}
+                href={route('maps')}
                 className="inline-block text-base text-dark-green hover:text-dark-green/75 font-bold leading-normal transform transition duration-200 ease-in-out hover:-translate-y-0.5"
             >
                 Maps
