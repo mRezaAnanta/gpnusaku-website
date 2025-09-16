@@ -7,8 +7,8 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useState } from "react"
-import { CircleAlert } from 'lucide-react';
+import { useState, useRef } from "react"
+import { CircleAlert, Upload, X, ImageIcon } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -30,6 +30,9 @@ interface Props {
 export default function Create() {
     const { categories } = usePage().props as Props;
     const [variants, setVariants] = useState([{ name: "", desc: "", price: ""}])
+    const [images, setImages] = useState<File[]>([])
+    const [imagePreviews, setImagePreviews] = useState<string[]>([])
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleAddVariant = () => {
         setVariants([...variants, { name: "", desc: "", price: ""}])
@@ -48,6 +51,58 @@ export default function Create() {
         setVariants(arr)
     }
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files
+        if (!files) return
+
+        const fileArray = Array.from(files)
+        const remainingSlots = 3 - images.length
+        const filesToAdd = fileArray.slice(0, remainingSlots)
+
+        // Validate file types
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
+        const validFiles = filesToAdd.filter(file => {
+            if (!validTypes.includes(file.type)) {
+                alert(`File ${file.name} is not a valid image type. Please use JPG, PNG, or WebP.`)
+                return false
+            }
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                alert(`File ${file.name} is too large. Please use images smaller than 5MB.`)
+                return false
+            }
+            return true
+        })
+
+        if (validFiles.length === 0) return
+
+        const newImages = [...images, ...validFiles]
+        setImages(newImages)
+
+        // Create preview URLs
+        const newPreviews = validFiles.map(file => URL.createObjectURL(file))
+        setImagePreviews(prev => [...prev, ...newPreviews])
+
+        // Clear the input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
+
+    const handleRemoveImage = (index: number) => {
+        const newImages = images.filter((_, i) => i !== index)
+        const newPreviews = imagePreviews.filter((_, i) => i !== index)
+
+        // Revoke the object URL to free memory
+        URL.revokeObjectURL(imagePreviews[index])
+
+        setImages(newImages)
+        setImagePreviews(newPreviews)
+    }
+
+    const handleImageUploadClick = () => {
+        fileInputRef.current?.click()
+    }
+
     const {data, setData, post, processing, errors } = useForm({
         name: '',
         description: '',
@@ -56,16 +111,18 @@ export default function Create() {
         contact: '',
         variants: variants,
         categories: '',
-        // images: '',
+        images: [],
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const submitData = {
             ...data,
-            variants: variants
+            variants: variants,
+            images: images
         };
         console.log('Form data:', submitData);
+        console.log('Images:', images);
         // post(route('products.store'));
     }
 
@@ -177,10 +234,76 @@ export default function Create() {
                             </SelectContent>
                         </Select>
                     </div>
-                    {/* <div className='gap-1.5'> */}
-                    {/*     <Label htmlFor="products images">Images</Label> */}
-                    {/*     <Textarea placeholder="Images" value={data.images}  onChange={(e) => setData('images', e.target.value)}/> */}
-                    {/* </div> */}
+                    <div className='space-y-3'>
+                        <Label>Product Images (Maximum 3)</Label>
+                        <div className="space-y-4">
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={handleImageChange}
+                                className="hidden"
+                            />
+
+                            {images.length < 2 && (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={handleImageUploadClick}
+                                    className="w-full h-32 border-2 border-dashed border-gray-300 hover:border-gray-400 flex flex-col items-center justify-center space-y-2"
+                                >
+                                    <Upload className="h-8 w-8 text-gray-400" />
+                                    <div className="text-center">
+                                        <p className="text-sm text-gray-600">Click to upload images</p>
+                                        <p className="text-xs text-gray-400">JPG, PNG, WebP (Max 5MB each)</p>
+                                        <p className="text-xs text-gray-400">{images.length}/3 images uploaded</p>
+                                    </div>
+                                </Button>
+                            )}
+
+                            {imagePreviews.length > 0 && (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    {imagePreviews.map((preview, index) => (
+                                        <div key={index} className="relative group">
+                                            <div className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200">
+                                                <img
+                                                    src={preview}
+                                                    alt={`Product image ${index + 1}`}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size="sm"
+                                                onClick={() => handleRemoveImage(index)}
+                                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                            <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                                                {index + 1}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
+                                <div className="flex items-center space-x-2 mb-2">
+                                    <ImageIcon className="h-4 w-4" />
+                                    <span className="font-medium">Image Upload Guidelines:</span>
+                                </div>
+                                <ul className="list-disc list-inside space-y-1 text-xs">
+                                    <li>Maximum 3 images allowed</li>
+                                    <li>Supported formats: JPG, PNG, WebP</li>
+                                    <li>Maximum file size: 5MB per image</li>
+                                    <li>First image will be used as the primary product image</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     <Button disabled={processing} type="submit">
                         {processing ? 'Creating Product...' : 'Create Product'}
                     </Button>
