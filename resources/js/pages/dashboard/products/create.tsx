@@ -35,14 +35,14 @@ export default function Create() {
         setVariants([...variants, { name: "", desc: "", price: ""}])
     }
 
-    const handleChangeVariant = (e, index) => {
-        let { key, val } = e.target
-        let onChangeValue = [...variants]
-        onChangeValue[index][key] = val
+    const handleChangeVariant = (e: React.ChangeEvent<HTMLInputElement>, index: number, field: string) => {
+        const value = e.target.value
+        const onChangeValue = [...variants]
+        onChangeValue[index][field] = value
         setVariants(onChangeValue)
     }
 
-    const handleDeleteVariant = (index) => {
+    const handleDeleteVariant = (index: number) => {
         const arr = [...variants]
         arr.splice(index, 1)
         setVariants(arr)
@@ -54,16 +54,19 @@ export default function Create() {
         manager: '',
         address: '',
         contact: '',
-        // TODO: make a price variant so that we can have multiple price
-        // variant: {},
+        variants: variants,
         categories: '',
         // images: '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(data);
-        // post(route('categories.store'));
+        const submitData = {
+            ...data,
+            variants: variants
+        };
+        console.log('Form data:', submitData);
+        // post(route('products.store'));
     }
 
     return (
@@ -106,20 +109,60 @@ export default function Create() {
                         <Input placeholder="Contact" value={data.contact}  onChange={(e) => setData('contact', e.target.value)}/>
                     </div>
                     <div className='gap-1.5'>
-                        <Label htmlFor="products variant">Price Variant</Label>
-                        <Button type="button" onClick={handleAddVariant}>Add price variant</Button>
-                        <div id="variant">
+                        <Label htmlFor="products variant">Price Variants</Label>
+                        <div className="space-y-4">
                             {variants.map((item, index) => (
-                                <div key={index}>
-                                    <Input placeholder="Name" value={item.name} onChange={(e) => handleChangeVariant(e, index)}/>
-                                    <Input placeholder="Description" value={item.desc} onChange={(e) => handleChangeVariant(e, index)}/>
-                                    <Input placeholder="Price" value={item.price} onChange={(e) => handleChangeVariant(e, index)}/>
-                                    {variants.length > 1 && (
-                                        <Button onClick={handleDeleteVariant(index)}>Add price variant</Button>
-                                    )}
+                                <div key={index} className="">
+                                    <div className="flex justify-between items-center">
+                                        <h4 className="font-medium">Variant {index + 1}</h4>
+                                        {variants.length > 1 && (
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size="sm"
+                                                onClick={() => handleDeleteVariant(index)}
+                                            >
+                                                Remove
+                                            </Button>
+                                        )}
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <div>
+                                            <Label htmlFor={`variant-name-${index}`}>Variant Name</Label>
+                                            <Input
+                                                id={`variant-name-${index}`}
+                                                placeholder="e.g., Small, Large, Premium"
+                                                value={item.name}
+                                                onChange={(e) => handleChangeVariant(e, index, 'name')}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor={`variant-desc-${index}`}>Description</Label>
+                                            <Input
+                                                id={`variant-desc-${index}`}
+                                                placeholder="Description of variant"
+                                                value={item.desc}
+                                                onChange={(e) => handleChangeVariant(e, index, 'desc')}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor={`variant-price-${index}`}>Price</Label>
+                                            <Input
+                                                id={`variant-price-${index}`}
+                                                placeholder="0.00"
+                                                type="number"
+                                                step="0.01"
+                                                value={item.price}
+                                                onChange={(e) => handleChangeVariant(e, index, 'price')}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                         </div>
+                        <Button type="button" variant="outline" onClick={handleAddVariant} className="mt-3">
+                            + Add Price Variant
+                        </Button>
                     </div>
                     <div className='gap-1.5'>
                         <Label htmlFor="products categories">Category</Label>
@@ -138,7 +181,9 @@ export default function Create() {
                     {/*     <Label htmlFor="products images">Images</Label> */}
                     {/*     <Textarea placeholder="Images" value={data.images}  onChange={(e) => setData('images', e.target.value)}/> */}
                     {/* </div> */}
-                    <Button disabled={processing} type="submit">Add Category</Button>
+                    <Button disabled={processing} type="submit">
+                        {processing ? 'Creating Product...' : 'Create Product'}
+                    </Button>
                 </form>
             </div>
         </AppLayout>
