@@ -31,6 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('{categories}', [CategoryController::class, 'update'])->name('categories.update');
             Route::delete('{categories}', [CategoryController::class, 'destroy'])->name('categories.destroy');
         });
+        Route::prefix('products')->group(function () {
+            Route::get('/', [ProductController::class, 'index'])->name('products.index');
+            Route::get('create', [ProductController::class, 'create'])->name('products.create');
+        });
     });
 });
 
