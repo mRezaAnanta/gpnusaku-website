@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { CircleAlert, Upload, X, ImageIcon } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -59,28 +59,40 @@ export default function Create() {
         const remainingSlots = 3 - images.length
         const filesToAdd = fileArray.slice(0, remainingSlots)
 
-        // Validate file types
+        // Validate file types and show better error messages
         const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
+        const errors = []
         const validFiles = filesToAdd.filter(file => {
             if (!validTypes.includes(file.type)) {
-                alert(`File ${file.name} is not a valid image type. Please use JPG, PNG, or WebP.`)
+                errors.push(`${file.name} is not a valid image type. Please use JPG, PNG, or WebP.`)
                 return false
             }
             if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                alert(`File ${file.name} is too large. Please use images smaller than 5MB.`)
+                errors.push(`${file.name} is too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Maximum size is 5MB.`)
                 return false
             }
             return true
         })
 
+        // Show all validation errors at once
+        if (errors.length > 0) {
+            alert('Image upload errors:\n' + errors.join('\n'))
+        }
+
         if (validFiles.length === 0) return
 
+        // Add valid files to images state
         const newImages = [...images, ...validFiles]
         setImages(newImages)
 
-        // Create preview URLs
+        // Create preview URLs for valid files only
         const newPreviews = validFiles.map(file => URL.createObjectURL(file))
         setImagePreviews(prev => [...prev, ...newPreviews])
+
+        // Provide feedback about successful uploads
+        // if (validFiles.length > 0) {
+        //     console.log(`Successfully added ${validFiles.length} image(s)`);
+        // }
 
         // Clear the input
         if (fileInputRef.current) {
@@ -89,14 +101,18 @@ export default function Create() {
     }
 
     const handleRemoveImage = (index: number) => {
+        // Revoke the object URL to free memory before removing
+        if (imagePreviews[index]) {
+            URL.revokeObjectURL(imagePreviews[index])
+        }
+
         const newImages = images.filter((_, i) => i !== index)
         const newPreviews = imagePreviews.filter((_, i) => i !== index)
 
-        // Revoke the object URL to free memory
-        URL.revokeObjectURL(imagePreviews[index])
-
         setImages(newImages)
         setImagePreviews(newPreviews)
+
+        // console.log(`Removed image ${index + 1}. Remaining: ${newImages.length} images`);
     }
 
     const handleImageUploadClick = () => {
@@ -111,14 +127,40 @@ export default function Create() {
         contact: '',
         variants: variants,
         categories: '',
-        images: [],
+        images: images,
     });
+
+    // Update form data when variants or images change
+    useEffect(() => {
+        setData('variants', variants)
+    }, [variants])
+
+    useEffect(() => {
+        setData('images', images)
+    }, [images])
+
+    // Cleanup effect to revoke object URLs when component unmounts
+    useEffect(() => {
+        return () => {
+            // Clean up all preview URLs when component unmounts
+            imagePreviews.forEach(preview => {
+                URL.revokeObjectURL(preview);
+            });
+        };
+    }, [])
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
+        // Validate that we have at least one variant with valid data
+        const validVariants = variants.filter(v => v.name.trim() && v.price.trim());
+        if (validVariants.length === 0) {
+            alert('Please add at least one valid variant with name and price.');
+            return;
+        }
+
         const formData = new FormData();
-        
+
         // Add basic fields
         formData.append('name', data.name);
         formData.append('description', data.description);
@@ -126,24 +168,38 @@ export default function Create() {
         formData.append('address', data.address);
         formData.append('contact', data.contact);
         formData.append('categories', data.categories);
-        
-        // Add variants
+
+        // Add variants (use current state)
         variants.forEach((variant, index) => {
             formData.append(`variants[${index}][name]`, variant.name);
-            formData.append(`variants[${index}][desc]`, variant.desc);
+            formData.append(`variants[${index}][desc]`, variant.desc || '');
             formData.append(`variants[${index}][price]`, variant.price);
         });
-        
-        // Add images
+
+        // Add images (use current state)
         images.forEach((image, index) => {
             formData.append(`images[${index}]`, image);
         });
-        
+
+        // Debug: Log FormData contents
+        // console.log('FormData contents:');
+        // for (let pair of formData.entries()) {
+        //     console.log(pair[0] + ': ' + pair[1]);
+        // }
+
         post(route('products.store'), {
             data: formData,
             forceFormData: true,
-            onSuccess: () => {
-                console.log('Product created successfully!');
+                onSuccess: () => {
+                // console.log('Product created successfully!');
+                // Clean up image preview URLs before resetting state
+                imagePreviews.forEach(preview => {
+                    URL.revokeObjectURL(preview);
+                });
+                // Reset form state
+                setVariants([{ name: "", desc: "", price: ""}]);
+                setImages([]);
+                setImagePreviews([]);
             },
             onError: (errors) => {
                 console.error('Validation errors:', errors);
@@ -271,7 +327,7 @@ export default function Create() {
                                 className="hidden"
                             />
 
-                            {images.length < 2 && (
+                            {images.length < 3 && (
                                 <Button
                                     type="button"
                                     variant="outline"
