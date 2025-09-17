@@ -116,14 +116,39 @@ export default function Create() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const submitData = {
-            ...data,
-            variants: variants,
-            images: images
-        };
-        console.log('Form data:', submitData);
-        console.log('Images:', images);
-        // post(route('products.store'));
+        
+        const formData = new FormData();
+        
+        // Add basic fields
+        formData.append('name', data.name);
+        formData.append('description', data.description);
+        formData.append('manager', data.manager);
+        formData.append('address', data.address);
+        formData.append('contact', data.contact);
+        formData.append('categories', data.categories);
+        
+        // Add variants
+        variants.forEach((variant, index) => {
+            formData.append(`variants[${index}][name]`, variant.name);
+            formData.append(`variants[${index}][desc]`, variant.desc);
+            formData.append(`variants[${index}][price]`, variant.price);
+        });
+        
+        // Add images
+        images.forEach((image, index) => {
+            formData.append(`images[${index}]`, image);
+        });
+        
+        post(route('products.store'), {
+            data: formData,
+            forceFormData: true,
+            onSuccess: () => {
+                console.log('Product created successfully!');
+            },
+            onError: (errors) => {
+                console.error('Validation errors:', errors);
+            }
+        });
     }
 
     return (
