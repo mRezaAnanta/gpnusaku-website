@@ -14,7 +14,8 @@ Route::get('/maps', function () {
 })->name('maps');
 
 Route::prefix('category')->group(function () {
-    Route::get('/', [CategoryController::class, 'index'])->name('category.index');
+    Route::get('/', [CategoryController::class, 'view'])->name('category.index');
+    Route::get('{category}', [CategoryController::class, 'list'])->name('category.list');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
