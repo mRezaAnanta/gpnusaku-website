@@ -13,6 +13,10 @@ Route::get('/maps', function () {
     return Inertia::render('maps');
 })->name('maps');
 
+Route::get('/contact', function () {
+    return Inertia::render('contact');
+})->name('contact');
+
 Route::prefix('category')->group(function () {
     Route::get('/', [CategoryController::class, 'view'])->name('category.index');
     Route::get('{category}', [CategoryController::class, 'list'])->name('category.list');

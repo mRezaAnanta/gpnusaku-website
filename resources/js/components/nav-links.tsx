@@ -23,7 +23,7 @@ const NavLinks = ({ isMobile = false }: { isMobile?: boolean}) => {
                 Maps
             </Link>
             <Link
-                href={route('register')}
+                href={route('contact')}
                 className="flex items-center gap-2 rounded-lg border border-white bg-white px-5 py-1.5 text-base leading-normal text-dark-green hover:text-dark-green/75 font-bold hover:border-[#1915014a] transform transition duration-200 ease-in-out hover:-translate-y-0.5"
             >
                 <Mail size={16} />
