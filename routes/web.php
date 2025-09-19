@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,9 +27,7 @@ Route::get('/product/{product}', [CategoryController::class, 'detail'])->name('p
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('dashboard')->group(function () {
-        Route::get('/', function () {
-            return Inertia::render('dashboard/index');
-        })->name('dashboard');
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::prefix('categories')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
