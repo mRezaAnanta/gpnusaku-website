@@ -6,6 +6,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Megaphone, Eye, Edit, Trash2, ImageIcon } from 'lucide-react';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { truncateText } from '@/lib/utils'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -70,11 +71,6 @@ export default function Index() {
             return `$${priceRange.min.toFixed(2)}`;
         }
         return `$${priceRange.min.toFixed(2)} - $${priceRange.max.toFixed(2)}`;
-    };
-
-    const truncateText = (text: string, maxLength: number = 100) => {
-        if (text.length <= maxLength) return text;
-        return text.substring(0, maxLength) + '...';
     };
 
     return (
@@ -151,7 +147,8 @@ export default function Index() {
                                     <TableCell>
                                         <div className="space-y-1">
                                             <div className="text-sm font-medium">
-                                                {product.variants.length} variant{product.variants.length !== 1 ? 's' : ''}
+                                                {/* {product.variants.length} variant{product.variants.length !== 1 ? 's' : ''} */}
+                                                {product.variants === null || undefined ? '' : `${product.variants.length} variant${product.variants.length !== 1 ? 's': ''}`}
                                             </div>
                                             <div className="text-xs text-gray-500">
                                                 {truncateText(product.variant_names, 40)}

@@ -30,6 +30,7 @@ interface Props {
 export default function Create() {
     const { categories } = usePage().props as Props;
     const [variants, setVariants] = useState([{ name: "", desc: "", price: ""}])
+    const [variants, setVariants] = useState()
     const [images, setImages] = useState<File[]>([])
     const [imagePreviews, setImagePreviews] = useState<string[]>([])
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -152,13 +153,6 @@ export default function Create() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validate that we have at least one variant with valid data
-        const validVariants = variants.filter(v => v.name.trim() && v.price.trim());
-        if (validVariants.length === 0) {
-            alert('Please add at least one valid variant with name and price.');
-            return;
-        }
-
         const formData = new FormData();
 
         // Add basic fields
@@ -169,12 +163,19 @@ export default function Create() {
         formData.append('contact', data.contact);
         formData.append('categories', data.categories);
 
-        // Add variants (use current state)
-        variants.forEach((variant, index) => {
-            formData.append(`variants[${index}][name]`, variant.name);
-            formData.append(`variants[${index}][desc]`, variant.desc || '');
-            formData.append(`variants[${index}][price]`, variant.price);
-        });
+        if (variants) {
+            // Add variants (use current state) - filter out completely empty variants
+            const validVariants = variants.filter(variant =>
+                variant.name.trim() || variant.desc.trim() || variant.price.trim()
+            );
+
+            // Add variants (use current state)
+            validVariants.forEach((variant, index) => {
+                formData.append(`variants[${index}][name]`, variant.name);
+                formData.append(`variants[${index}][desc]`, variant.desc || '');
+                formData.append(`variants[${index}][price]`, variant.price);
+            });
+        }
 
         // Add images (use current state)
         images.forEach((image, index) => {
@@ -190,7 +191,7 @@ export default function Create() {
         post(route('products.store'), {
             data: formData,
             forceFormData: true,
-                onSuccess: () => {
+            onSuccess: () => {
                 // console.log('Product created successfully!');
                 // Clean up image preview URLs before resetting state
                 imagePreviews.forEach(preview => {
@@ -214,16 +215,16 @@ export default function Create() {
                 <form onSubmit={handleSubmit} className='space-y-4'>
                     {Object.keys(errors).length > 0 &&(
                         <Alert>
-                        <CircleAlert className="h-4 w-4" />
-                        <AlertTitle>Errors!</AlertTitle>
-                        <AlertDescription>
-                            <ul>
-                                {Object.entries(errors).map(([key, message]) => (
-                                    <li key={key}>{message as string}</li>
-                                ))}
-                            </ul>
-                        </AlertDescription>
-                      </Alert>
+                            <CircleAlert className="h-4 w-4" />
+                            <AlertTitle>Errors!</AlertTitle>
+                            <AlertDescription>
+                                <ul>
+                                    {Object.entries(errors).map(([key, message]) => (
+                                        <li key={key}>{message as string}</li>
+                                    ))}
+                                </ul>
+                            </AlertDescription>
+                        </Alert>
                     )}
 
                     <div className='gap-1.5'>
@@ -249,7 +250,7 @@ export default function Create() {
                     <div className='gap-1.5'>
                         <Label htmlFor="products variant">Price Variants</Label>
                         <div className="space-y-4">
-                            {variants.map((item, index) => (
+                            {variants && variants.map((item, index) => (
                                 <div key={index} className="">
                                     <div className="flex justify-between items-center">
                                         <h4 className="font-medium">Variant {index + 1}</h4>

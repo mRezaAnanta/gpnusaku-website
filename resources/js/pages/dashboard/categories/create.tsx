@@ -26,7 +26,6 @@ export default function Index() {
         post(route('categories.store'));
     }
 
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create a New Categories" />

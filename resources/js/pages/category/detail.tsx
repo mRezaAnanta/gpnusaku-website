@@ -50,6 +50,7 @@ export default function Detail() {
     };
 
     const formatPhoneNumber = (phone: string) => {
+        if (!phone) return ""
         // Remove any non-digit characters
         let cleaned = phone.replace(/\D/g, '');
         // If starts with 0, replace with 62
@@ -222,24 +223,27 @@ export default function Detail() {
                             </div>
 
                             {/* Description */}
-                            <div className="bg-white rounded-lg p-6 shadow-lg">
-                                <h3 className="font-nunito font-bold text-xl text-dark-green mb-3">Deskripsi Produk</h3>
-                                <div className="text-gray-700 leading-relaxed">
-                                    {showFullDescription || product.description.length <= 200 ? (
-                                        <p>{product.description}</p>
-                                    ) : (
-                                            <>
-                                                <p>{product.description.substring(0, 200)}...</p>
-                                                <button
-                                                    onClick={() => setShowFullDescription(true)}
-                                                    className="text-dark-green hover:text-green font-medium mt-2 transition-colors duration-200"
-                                                >
-                                                    Baca selengkapnya
-                                                </button>
-                                            </>
-                                        )}
+                            {product.description && (
+
+                                <div className="bg-white rounded-lg p-6 shadow-lg">
+                                    <h3 className="font-nunito font-bold text-xl text-dark-green mb-3">Deskripsi Produk</h3>
+                                    <div className="text-gray-700 leading-relaxed">
+                                        {!product.description ? "" : showFullDescription || product.description.length <= 200 ? (
+                                            <p>{product.description}</p>
+                                        ) : (
+                                                <>
+                                                    <p>{product.description.substring(0, 200)}...</p>
+                                                    <button
+                                                        onClick={() => setShowFullDescription(true)}
+                                                        className="text-dark-green hover:text-green font-medium mt-2 transition-colors duration-200"
+                                                    >
+                                                        Baca selengkapnya
+                                                    </button>
+                                                </>
+                                            )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* Variants */}
                             {product.variants && product.variants.length > 0 && (
@@ -285,30 +289,32 @@ export default function Detail() {
                                             <p className="font-medium text-gray-800">{product.address}</p>
                                         </div>
                                     </div>
-                                    {/* <div className="flex items-center gap-3"> */}
-                                    {/*     <Phone className="w-5 h-5 text-dark-green" /> */}
-                                    {/*     <div> */}
-                                    {/*         <p className="text-sm text-gray-600">Kontak</p> */}
-                                    {/*         <p className="font-medium text-gray-800">{product.contact}</p> */}
-                                    {/*     </div> */}
-                                    {/* </div> */}
+                                    <div className="flex items-center gap-3">
+                                        <Phone className="w-5 h-5 text-dark-green" />
+                                        <div>
+                                            <p className="text-sm text-gray-600">Kontak</p>
+                                            <p className="font-medium text-gray-800">{product.contact}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <a
-                                    href={whatsappUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-fit bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-nunito font-bold text-center transition-all duration-200 transform hover:scale-105 hover:shadow-xl flex items-center justify-center gap-3"
-                                >
-                                    <WhatsApp />
-                                    Hubungi via WhatsApp
-                                </a>
-                                <p className="text-xs text-gray-500">
-                                    Klik tombol di atas untuk menghubungi pengelola langsung melalui WhatsApp
-                                </p>
-                            </div>
+                            {product.contact && (
+                                <div className="space-y-3">
+                                    <a
+                                        href={whatsappUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-fit bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-nunito font-bold text-center transition-all duration-200 transform hover:scale-105 hover:shadow-xl flex items-center justify-center gap-3"
+                                    >
+                                        <WhatsApp />
+                                        Hubungi via WhatsApp
+                                    </a>
+                                    <p className="text-xs text-gray-500">
+                                        Klik tombol di atas untuk menghubungi pengelola langsung melalui WhatsApp
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Product Meta */}
                             {/* <div className="bg-gray-50 rounded-lg p-4"> */}

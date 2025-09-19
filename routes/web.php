@@ -18,6 +18,8 @@ Route::prefix('category')->group(function () {
     Route::get('{category}', [CategoryController::class, 'list'])->name('category.list');
 });
 
+Route::get('/product/{product}', [CategoryController::class, 'detail'])->name('product.detail');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('dashboard')->group(function () {
         Route::get('/', function () {
