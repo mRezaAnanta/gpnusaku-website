@@ -1,14 +1,14 @@
-import { Head, Link } from '@inertiajs/react'
+import { Head, Link, usePage } from '@inertiajs/react'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import CardProduct from '@/components/card-product'
-import { truncateText } from '@/lib/utils'
+import { truncateText, formatDate } from '@/lib/utils'
 
 interface Category {
     id: number,
     name: string,
     description?: string,
-    timestamp: string,
+    created_at: string,
 }
 
 interface Props {
@@ -71,10 +71,10 @@ export default function Index() {
                     <h1 className="font-dancing font-bold text-4xl text-dark-green">Kategori Produk</h1>
                     <p className="font-nunito text-base w-2/3 mb-4">Pilih kategori yang ingin kamu telusuri</p>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {category && category.map(c => {
+                        {categories && categories.map(c => {
                             return (
                                 <Link key={c.id} href={route('category.list', c.id)}>
-                                    <CardProduct title={c.name} description={truncateText(c.description, 120)} timestamp={c.timestamp} />
+                                    <CardProduct title={c.name} description={truncateText(c.description, 120)} timestamp={formatDate(c.created_at)} />
                                 </Link>
                             )
                         })}
