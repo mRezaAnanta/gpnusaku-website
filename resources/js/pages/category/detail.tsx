@@ -124,24 +124,24 @@ export default function Detail() {
             <Navbar />
             <main className="bg-gradient-to-b from-green via-light-green to-white min-h-screen">
                 {/* Breadcrumb Navigation */}
-                <div className="bg-dark-green/10 py-4">
-                    <div className="container mx-auto px-6 lg:px-24">
-                        <div className="flex items-center gap-2 text-sm text-dark-green">
-                            <Link href="/category" className="hover:text-green transition-colors duration-200">
-                                Kategori
-                            </Link>
-                            <span>/</span>
-                            <Link
-                                href={`/category/${product.category.id}`}
-                                className="hover:text-green transition-colors duration-200"
-                            >
-                                {product.category.name}
-                            </Link>
-                            <span>/</span>
-                            <span className="font-medium">{product.name}</span>
-                        </div>
-                    </div>
-                </div>
+                {/* <div className="bg-dark-green/10 py-4"> */}
+                {/*     <div className="container mx-auto px-6 lg:px-24"> */}
+                {/*         <div className="flex items-center gap-2 text-sm text-dark-green"> */}
+                {/*             <Link href="/category" className="hover:text-green transition-colors duration-200"> */}
+                {/*                 Kategori */}
+                {/*             </Link> */}
+                {/*             <span>/</span> */}
+                {/*             <Link */}
+                {/*                 href={`/category/${product.category.id}`} */}
+                {/*                 className="hover:text-green transition-colors duration-200" */}
+                {/*             > */}
+                {/*                 {product.category.name} */}
+                {/*             </Link> */}
+                {/*             <span>/</span> */}
+                {/*             <span className="font-medium">{product.name}</span> */}
+                {/*         </div> */}
+                {/*     </div> */}
+                {/* </div> */}
 
                 <div className="container mx-auto px-6 lg:px-24 py-8">
                     {/* Back Button */}

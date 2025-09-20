@@ -29,7 +29,6 @@ interface Props {
 
 export default function Create() {
     const { categories } = usePage().props as Props;
-    const [variants, setVariants] = useState([{ name: "", desc: "", price: ""}])
     const [variants, setVariants] = useState()
     const [images, setImages] = useState<File[]>([])
     const [imagePreviews, setImagePreviews] = useState<string[]>([])
@@ -152,6 +151,8 @@ export default function Create() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!data.manager) data.manager = "-"
+        if (!data.address) data.address = "Gampong Nusa, Kec. Lhoknga, Kabupaten Aceh Besar, Aceh 23353"
 
         const formData = new FormData();
 
@@ -211,7 +212,7 @@ export default function Create() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create a New Product" />
-            <div className='w-8/12 p-4'>
+            <div className='w-9/12 p-4'>
                 <form onSubmit={handleSubmit} className='space-y-4'>
                     {Object.keys(errors).length > 0 &&(
                         <Alert>
@@ -228,27 +229,27 @@ export default function Create() {
                     )}
 
                     <div className='gap-1.5'>
-                        <Label htmlFor="products name">Name</Label>
+                        <Label htmlFor="products name">Name *</Label>
                         <Input placeholder="Product Name" value={data.name} onChange={(e) => setData('name', e.target.value)}></Input>
                     </div>
                     <div className='gap-1.5'>
-                        <Label htmlFor="products description">Description</Label>
+                        <Label htmlFor="products description">Description (Optionals)</Label>
                         <Textarea placeholder="Description" value={data.description}  onChange={(e) => setData('description', e.target.value)}/>
                     </div>
                     <div className='gap-1.5'>
                         <Label htmlFor="products manager">Manager</Label>
-                        <Input placeholder="Manager" value={data.manager}  onChange={(e) => setData('manager', e.target.value)}/>
+                        <Input placeholder="Manager (default : -)" value={data.manager}  onChange={(e) => setData('manager', e.target.value)}/>
                     </div>
                     <div className='gap-1.5'>
                         <Label htmlFor="products address">Address</Label>
-                        <Textarea placeholder="Address" value={data.address}  onChange={(e) => setData('address', e.target.value)}/>
+                        <Textarea placeholder="Address (default : Gampong Nusa, Kec. Lhoknga, Kabupaten Aceh Besar, Aceh 23353 )" value={data.address}  onChange={(e) => setData('address', e.target.value)}/>
                     </div>
                     <div className='gap-1.5'>
-                        <Label htmlFor="products contact">Contact</Label>
+                        <Label htmlFor="products contact">Contact (Optionals)</Label>
                         <Input placeholder="Contact" value={data.contact}  onChange={(e) => setData('contact', e.target.value)}/>
                     </div>
                     <div className='gap-1.5'>
-                        <Label htmlFor="products variant">Price Variants</Label>
+                        <Label htmlFor="products variant">Price Variants (Optionals)</Label>
                         <div className="space-y-4">
                             {variants && variants.map((item, index) => (
                                 <div key={index} className="">
@@ -304,7 +305,7 @@ export default function Create() {
                         </Button>
                     </div>
                     <div className='gap-1.5'>
-                        <Label htmlFor="products categories">Category</Label>
+                        <Label htmlFor="products categories">Category *</Label>
                         <Select onValueChange={value => setData('categories', value)}>
                             <SelectTrigger className="">
                                 <SelectValue placeholder="Please select product category" />
@@ -317,7 +318,7 @@ export default function Create() {
                         </Select>
                     </div>
                     <div className='space-y-3'>
-                        <Label>Product Images (Maximum 3)</Label>
+                        <Label>Product Images (Optionals)</Label>
                         <div className="space-y-4">
                             <input
                                 ref={fileInputRef}

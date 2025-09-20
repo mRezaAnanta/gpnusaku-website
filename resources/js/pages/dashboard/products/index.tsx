@@ -6,7 +6,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Megaphone, Eye, Edit, Trash2, ImageIcon } from 'lucide-react';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { truncateText } from '@/lib/utils'
+import { truncateText, formatPrice, formatDate } from '@/lib/utils'
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -66,11 +66,8 @@ export default function Index() {
         }
     };
 
-    const formatPrice = (priceRange: PriceRange) => {
-        if (priceRange.min === priceRange.max) {
-            return `$${priceRange.min.toFixed(2)}`;
-        }
-        return `$${priceRange.min.toFixed(2)} - $${priceRange.max.toFixed(2)}`;
+    const formatPriceRange = (priceRange: PriceRange) => {
+        return priceRange.min === priceRange.max ? formatPrice(priceRange.min) : `${formatPrice(priceRange.min)} - ${formatPrice(priceRange.max)}`
     };
 
     return (
@@ -102,7 +99,7 @@ export default function Index() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[80px]">Image</TableHead>
-                                <TableHead className="w-[100px]">ID</TableHead>
+                                <TableHead>No</TableHead>
                                 <TableHead>Name</TableHead>
                                 <TableHead>Category</TableHead>
                                 <TableHead>Manager</TableHead>
@@ -114,7 +111,7 @@ export default function Index() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {products.map((product) => (
+                            {products.map((product, index) => (
                                 <TableRow key={product.id}>
                                     <TableCell>
                                         {product.primary_image ? (
@@ -129,12 +126,12 @@ export default function Index() {
                                                 </div>
                                             )}
                                     </TableCell>
-                                    <TableCell className="font-medium">{product.id}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell>
                                         <div className="space-y-1">
                                             <div className="font-medium">{product.name}</div>
-                                            <div className="text-sm text-gray-500">
-                                                {truncateText(product.description, 60)}
+                                            <div className="text-xs text-gray-500">
+                                                {truncateText(product.description, 30)}
                                             </div>
                                         </div>
                                     </TableCell>
@@ -147,8 +144,7 @@ export default function Index() {
                                     <TableCell>
                                         <div className="space-y-1">
                                             <div className="text-sm font-medium">
-                                                {/* {product.variants.length} variant{product.variants.length !== 1 ? 's' : ''} */}
-                                                {product.variants === null || undefined ? '' : `${product.variants.length} variant${product.variants.length !== 1 ? 's': ''}`}
+                                                {product.variants === null || undefined ? '-' : `${product.variants.length} variant${product.variants.length !== 1 ? 's': ''}`}
                                             </div>
                                             <div className="text-xs text-gray-500">
                                                 {truncateText(product.variant_names, 40)}
@@ -156,7 +152,7 @@ export default function Index() {
                                         </div>
                                     </TableCell>
                                     <TableCell className="font-medium text-green-600">
-                                        {formatPrice(product.price_range)}
+                                        {formatPriceRange(product.price_range)}
                                     </TableCell>
                                     <TableCell>
                                         <div className="text-sm">
@@ -167,18 +163,20 @@ export default function Index() {
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-sm text-gray-500">
-                                        {new Date(product.created_at).toLocaleDateString()}
+                                        {formatDate(product.created_at)}
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <div className="flex justify-center space-x-1">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="h-8 w-8 p-0"
-                                                title="View Details"
-                                            >
-                                                <Eye className="h-4 w-4" />
-                                            </Button>
+                                            <Link href={route('product.detail', product.id)}>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="h-8 w-8 p-0"
+                                                    title="View Details"
+                                                >
+                                                    <Eye className="h-4 w-4" />
+                                                </Button>
+                                            </Link>
                                             <Link href={route('products.edit', product.id)}>
                                                 <Button
                                                     variant="outline"

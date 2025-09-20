@@ -42,17 +42,18 @@ export default function Edit() {
     const { product, categories } = usePage().props as Props;
 
     // Initialize variants from product data, ensuring proper data structure
-    const [variants, setVariants] = useState(() => {
-        if (product.variants && Array.isArray(product.variants) && product.variants.length > 0) {
-            // Ensure all variant properties exist and are strings
-            return product.variants.map(variant => ({
-                name: variant.name || '',
-                desc: variant.desc || '',
-                price: variant.price ? variant.price.toString() : '0'
-            }));
-        }
-        return [{ name: "", desc: "", price: "0" }];
-    });
+    // const [variants, setVariants] = useState(() => {
+    //     if (product.variants && Array.isArray(product.variants) && product.variants.length > 0) {
+    //         // Ensure all variant properties exist and are strings
+    //         return product.variants.map(variant => ({
+    //             name: variant.name || '',
+    //             desc: variant.desc || '',
+    //             price: variant.price ? variant.price.toString() : '0'
+    //         }));
+    //     }
+    //     return [{ name: "", desc: "", price: "0" }];
+    // });
+    const [variants, setVariants] = useState()
     const [existingImages, setExistingImages] = useState<string[]>(product.images || []);
     const [newImages, setNewImages] = useState<File[]>([]);
     const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
@@ -174,29 +175,31 @@ export default function Edit() {
         e.preventDefault();
 
         // Validate variants client-side first
-        const validVariants = variants.filter(v => v.name.trim() && v.price.trim());
-        if (validVariants.length === 0) {
-            alert('Please add at least one valid variant with name and price.');
-            return;
-        }
+        // const validVariants = variants.filter(v => v.name.trim() && v.price.trim());
+        // if (validVariants.length === 0) {
+        //     alert('Please add at least one valid variant with name and price.');
+        //     return;
+        // }
 
         const formData = new FormData();
         formData.append('_method', 'PUT');
 
         // Add basic fields
         formData.append('name', data.name);
-        formData.append('description', data.description);
+        formData.append('description', data.description || '');
         formData.append('manager', data.manager);
         formData.append('address', data.address);
-        formData.append('contact', data.contact);
+        formData.append('contact', data.contact || '');
         formData.append('categories', data.categories);
 
-        // Add variants with proper validation
-        variants.forEach((variant, index) => {
-            formData.append(`variants[${index}][name]`, variant.name || '');
-            formData.append(`variants[${index}][desc]`, variant.desc || '');
-            formData.append(`variants[${index}][price]`, variant.price || '0');
-        });
+        if (variants) {
+            // Add variants with proper validation
+            variants.forEach((variant, index) => {
+                formData.append(`variants[${index}][name]`, variant.name || '');
+                formData.append(`variants[${index}][desc]`, variant.desc || '');
+                formData.append(`variants[${index}][price]`, variant.price || '0');
+            });
+        }
 
         // Add keep_images (existing images to retain)
         existingImages.forEach((imageUrl, index) => {
@@ -209,17 +212,17 @@ export default function Edit() {
         });
 
         // Debug: Log all the data being sent
-        console.log('=== DEBUG INFO ===');
-        console.log('Product ID:', product.id);
-        console.log('Form data object:', data);
-        console.log('Variants state:', variants);
-        console.log('Existing images:', existingImages);
-        console.log('New images:', newImages);
-        console.log('FormData contents:');
-        for (let pair of formData.entries()) {
-            console.log(`${pair[0]}: ${pair[1]}`);
-        }
-        console.log('=================');
+        // console.log('=== DEBUG INFO ===');
+        // console.log('Product ID:', product.id);
+        // console.log('Form data object:', data);
+        // console.log('Variants state:', variants);
+        // console.log('Existing images:', existingImages);
+        // console.log('New images:', newImages);
+        // console.log('FormData contents:');
+        // for (let pair of formData.entries()) {
+        //     console.log(`${pair[0]}: ${pair[1]}`);
+        // }
+        // console.log('=================');
 
         // Use POST with method spoofing for file uploads
         router.post(route('products.update', product.id), formData, {
@@ -247,21 +250,21 @@ export default function Edit() {
                 <form onSubmit={handleSubmit} className='space-y-4'>
                     {Object.keys(errors).length > 0 &&(
                         <Alert>
-                        <CircleAlert className="h-4 w-4" />
-                        <AlertTitle>Validation Errors!</AlertTitle>
-                        <AlertDescription>
-                            <ul className="space-y-1">
-                                {Object.entries(errors).map(([key, message]) => {
-                                    const displayMessage = Array.isArray(message) ? message.join(', ') : message;
-                                    return (
-                                        <li key={key} className="text-sm">
-                                            <strong>{key}:</strong> {displayMessage as string}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </AlertDescription>
-                      </Alert>
+                            <CircleAlert className="h-4 w-4" />
+                            <AlertTitle>Validation Errors!</AlertTitle>
+                            <AlertDescription>
+                                <ul className="space-y-1">
+                                    {Object.entries(errors).map(([key, message]) => {
+                                        const displayMessage = Array.isArray(message) ? message.join(', ') : message;
+                                        return (
+                                            <li key={key} className="text-sm">
+                                                <strong>{key}:</strong> {displayMessage as string}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </AlertDescription>
+                        </Alert>
                     )}
 
                     <div className='gap-1.5'>
@@ -287,7 +290,7 @@ export default function Edit() {
                     <div className='gap-1.5'>
                         <Label htmlFor="products variant">Price Variants</Label>
                         <div className="space-y-4">
-                            {variants.map((item, index) => (
+                            {variants && variants.map((item, index) => (
                                 <div key={index} className="">
                                     <div className="flex justify-between items-center">
                                         <h4 className="font-medium">Variant {index + 1}</h4>

@@ -5,6 +5,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Megaphone } from 'lucide-react';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { formatDate } from '@/lib/utils'
 
 // TODO: change ziggy to wayfinder
 const breadcrumbs: BreadcrumbItem[] = [
@@ -18,6 +19,7 @@ interface Categories {
     id: number,
     name: string,
     description: string,
+    updated_at: string,
 }
 
 interface Props {
@@ -63,7 +65,7 @@ export default function Index() {
                         <TableCaption>A list of your recent categories.</TableCaption>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[100px]">ID</TableHead>
+                                <TableHead>No</TableHead>
                                 <TableHead>Name</TableHead>
                                 <TableHead>Description</TableHead>
                                 <TableHead>Last Updated</TableHead>
@@ -71,12 +73,12 @@ export default function Index() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {categories.map((c) => (
+                            {categories.map((c, index) => (
                                 <TableRow key={c.id}>
-                                    <TableCell className="font-medium">{c.id}</TableCell>
+                                    <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell>{c.name}</TableCell>
                                     <TableCell className="max-w-[300px] whitespace-normal break-words">{c.description}</TableCell>
-                                    <TableCell>{c.updated_at}</TableCell>
+                                    <TableCell>{formatDate(c.updated_at)}</TableCell>
                                     <TableCell className="text-center space-x-2">
                                         <Link href={route('categories.edit', c.id)}><Button className="bg-slate-600 hover:bg-slate-700">Edit</Button></Link>
                                         <Button disabled={processing} onClick={() => handleDelete(c.id, c.name)} className="bg-red-500 hover:bg-red-700">Delete</Button>

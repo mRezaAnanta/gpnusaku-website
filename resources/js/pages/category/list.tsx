@@ -41,7 +41,7 @@ interface Props {
 
 export default function List() {
     const { category, products } = usePage().props as Props;
-    
+
     return (
         <>
             <Head title={`Kategori - ${category.name}`}>
@@ -55,14 +55,14 @@ export default function List() {
                 <div className="flex flex-col mx-auto gap-8">
                     {/* Back Button and Category Header */}
                     <div className="flex flex-col gap-4">
-                        <Link 
-                            href="/category" 
+                        <Link
+                            href="/category"
                             className="flex items-center gap-2 text-dark-green hover:text-green transition-colors duration-200 w-fit"
                         >
                             <ArrowLeft size={20} />
                             <span className="font-nunito font-medium">Kembali ke Kategori</span>
                         </Link>
-                        
+
                         <div className="text-center">
                             <h1 className="font-dancing font-bold text-4xl text-dark-green mb-2">
                                 {category.name}
@@ -72,7 +72,7 @@ export default function List() {
                             </p>
                         </div>
                     </div>
-                    
+
                     {/* Products Section */}
                     <div className="flex flex-col gap-6">
                         {products && products.length > 0 ? (
@@ -82,10 +82,10 @@ export default function List() {
                                         Produk dalam Kategori Ini ({products.length} produk)
                                     </h2>
                                 </div>
-                                
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                     {products.map(product => (
-                                        <CardCategory 
+                                        <CardCategory
                                             key={product.id}
                                             id={product.id}
                                             title={product.name}
